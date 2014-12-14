@@ -303,14 +303,14 @@ PeerConnection.prototype.createOffer = function(audioCodec, videoCodec) {
             //     }
             // }
 
-            if(audioCodec === 'g711') {
-                offerSDP.sdp = sdpSwapper.forceG711(offerSDP.sdp);
-                logger.log(LOG_ID, "SDP forced to G711", offerSDP.sdp);    
+            if(audioCodec  && audioCodec !== 'opus/48000/2') {
+                offerSDP.sdp = sdpSwapper.forceAudioCodecTo(offerSDP.sdp, audioCodec);
+                logger.log(LOG_ID, "SDP forced " + audioCodec, offerSDP.sdp);    
             }
 
-            if(videoCodec === 'h264') {
-                offerSDP.sdp = sdpSwapper.forceH264(offerSDP.sdp);
-                logger.log(LOG_ID, "SDP forced to H264", offerSDP.sdp);
+            if(videoCodec && videoCodec !== 'VP8/90000') {
+                offerSDP.sdp = sdpSwapper.forceVideoCodecTo(offerSDP.sdp, videoCodec);
+                logger.log(LOG_ID, "SDP forced " + videoCodec, offerSDP.sdp);
             }
 
             var sdpMedia = sdpSwapper.getMediaInSDP(offerSDP.sdp);
