@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>Jasmine Spec Runner • JS Total Alcatel–Lucent février 2013</title>
+
+  <link rel="shortcut icon" type="image/png" href="lib/jasmine-1.3.1/jasmine_favicon.png">
+  <link rel="stylesheet" type="text/css" href="lib/jasmine-1.3.1/jasmine.css">
+  <script type="text/javascript" src="lib/jasmine-1.3.1/jasmine.js"></script>
+  <script type="text/javascript" src="lib/jasmine-1.3.1/jasmine-html.js"></script>
+  <script type="text/javascript" src="lib/sinon-1.5.2.js"></script>
+
+  <!-- include source files here... -->
+  <script type="text/javascript" src="../public/sonotone.js"></script>
+
+  <!-- include spec files here... -->
+  <script type="text/javascript" src="spec/logSpec.js"></script>
+  <script type="text/javascript" src="spec/adapterSpec.js"></script>
+  <script type="text/javascript" src="spec/localMediaSpec.js"></script>
+  <script type="text/javascript" src="spec/eventSpec.js"></script>
+  <script type="text/javascript" src="spec/streamSpec.js"></script>
+  <script type="text/javascript" src="spec/websocketSpec.js"></script>
+  <script type="text/javascript" src="spec/capsSpec.js"></script>
+  <script type="text/javascript" src="spec/ioSpec.js"></script>
+  <script type="text/javascript" src="spec/peerConnectionSpec.js"></script>
+  <script type="text/javascript" src="spec/configurationSpec.js"></script>
+  <script type="text/javascript" src="spec/peerSpec.js"></script>
+  <script type="text/javascript" src="spec/sourceSpec.js"></script>
+  <script type="text/javascript" src="spec/sdpSpec.js"></script>
+
+  <script type="text/javascript">
+    (function() {
+      var jasmineEnv = jasmine.getEnv();
+      jasmineEnv.updateInterval = 1000;
+
+      var htmlReporter = new jasmine.HtmlReporter();
+
+      jasmineEnv.addReporter(htmlReporter);
+
+      jasmineEnv.specFilter = function(spec) {
+        return htmlReporter.specFilter(spec);
+      };
+
+      var currentWindowOnload = window.onload;
+
+      window.onload = function() {
+        if (currentWindowOnload) {
+          currentWindowOnload();
+        }
+        execJasmine();
+      };
+
+      function execJasmine() {
+        jasmineEnv.execute();
+      }
+
+    })();
+  </script>
+
+</head>
+
+<body>
+</body>
+</html>
