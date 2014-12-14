@@ -23,6 +23,9 @@ Sonotone separates the Transport/SIG from the Media/PeerConnection by providing 
 
 # HISTORY
 
+## Version 1.0.1
+ - FEATURE: Force to any codec (not only G711 and H264)
+
 ## Version 1.0.0
  - FEATURE: Call
  - FEATURE: Call statistics

@@ -1,4 +1,4 @@
-var VERSION = "0.5.0";
+var VERSION = "1.0.1";
 
 var LOG_ID = 'SONOTONE.IO';
 
