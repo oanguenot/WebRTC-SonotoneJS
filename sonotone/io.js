@@ -434,13 +434,16 @@ module.exports = {
      * Try to call an other peer
      * @param {String} callee The recipient ID
      * @param {String} media 'video', 'screen', 'data' or 'video' if null
+     * @param {Object} constraints that contains
      * @param {String} audioCodec 'g711', 'opus' or default order of browser if null
-     * @param {String} videoCodec 'vp8' or 'h264' or default order of browser if null 
+     * @param {String} videoCodec 'vp8' or 'h264' or default order of browser if null
+     * @param {Number} audioBandwidth   The max bandwidth for audio
+     * @param {Number} videoBandwidth   The max bandwidth for video 
      *
      * @api public
      */
 
-    call: function(callee, media, audioCodec, videoCodec) {
+    call: function(callee, media, constraints) {
 
         media = media || 'video';
 
@@ -449,7 +452,7 @@ module.exports = {
         if(peer) {
             // If no tmp_offer for that peer = call
             // if tmp_offer for that peer = answer
-            peer.call(media, tmp_offer[callee], audioCodec, videoCodec);
+            peer.call(media, tmp_offer[callee], constraints);
             delete tmp_offer[callee];
         }
         else {

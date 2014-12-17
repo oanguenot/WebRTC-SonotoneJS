@@ -256,11 +256,14 @@ PeerConnection.prototype.attach = function(stream) {
 
 /**
  * Create an offer for calling an other peer
+ * @param {Object} mediaConstraints Additionnal constraints that contains: 
  * @param {String} audioCodec 'g711', 'opus' or default order of browser if null
- * @param {String} videoCodec 'vp8' or 'h264' or default order of browser if null 
+ * @param {String} videoCodec 'vp8' or 'h264' or default order of browser if null
+ * @param {Number} audioBandwidth   The max bandwidth for audio
+ * @param {Number} videoBandwidth   The max bandwidth for video
  */
 
-PeerConnection.prototype.createOffer = function(audioCodec, videoCodec) {
+PeerConnection.prototype.createOffer = function(mediaConstraints) {
 
     logger.log(LOG_ID, "Try to create an offer for <" + this._id + ">...");
 
@@ -289,28 +292,27 @@ PeerConnection.prototype.createOffer = function(audioCodec, videoCodec) {
 
         this._peer.createOffer(function(offerSDP) {
 
-            // if(fct) {
-            //     switch (fct.action) {
-            //         case 'mute':
-            //             offerSDP = that.muteSDP(offerSDP);
-            //             muted = true;
-            //             break;
-            //         case 'unmute':
-            //             offerSDP = that.unmuteSDP(offerSDP);
-            //             break;
-            //         default:
-            //             break;
-            //     }
-            // }
+            // Change tthe SDP to force some parameters
+            if(mediaConstraints) {
+                if(mediaConstraints.audioCodec  && mediaConstraints.audioCodec !== 'opus/48000/2') {
+                    offerSDP.sdp = sdpSwapper.forceAudioCodecTo(offerSDP.sdp, mediaConstraints.audioCodec);
+                    logger.log(LOG_ID, "SDP forced audio to " + mediaConstraints.audioCodec, offerSDP.sdp);    
+                }
 
-            if(audioCodec  && audioCodec !== 'opus/48000/2') {
-                offerSDP.sdp = sdpSwapper.forceAudioCodecTo(offerSDP.sdp, audioCodec);
-                logger.log(LOG_ID, "SDP forced " + audioCodec, offerSDP.sdp);    
-            }
+                if(mediaConstraints.videoCodec && mediaConstraints.videoCodec !== 'VP8/90000') {
+                    offerSDP.sdp = sdpSwapper.forceVideoCodecTo(offerSDP.sdp, mediaConstraints.videoCodec);
+                    logger.log(LOG_ID, "SDP forced video to " + mediaConstraints.videoCodec, offerSDP.sdp);
+                }
 
-            if(videoCodec && videoCodec !== 'VP8/90000') {
-                offerSDP.sdp = sdpSwapper.forceVideoCodecTo(offerSDP.sdp, videoCodec);
-                logger.log(LOG_ID, "SDP forced " + videoCodec, offerSDP.sdp);
+                if(mediaConstraints.audioBandwidth) {
+                    offerSDP.sdp = sdpSwapper.limitAudioBandwidthTo(offerSDP.sdp, mediaConstraints.audioBandwidth);
+                    logger.log(LOG_ID, "SDP limited audio to " + mediaConstraints.audioBandwidth, offerSDP.sdp);
+                }
+
+                if(mediaConstraints.videoBandwidth) {
+                    offerSDP.sdp = sdpSwapper.limitVideoBandwidthTo(offerSDP.sdp, mediaConstraints.videoBandwidth);
+                    logger.log(LOG_ID, "SDP limited video to " + mediaConstraints.videoBandwidth, offerSDP.sdp);
+                }
             }
 
             var sdpMedia = sdpSwapper.getMediaInSDP(offerSDP.sdp);

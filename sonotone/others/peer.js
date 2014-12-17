@@ -75,11 +75,14 @@ Peer.prototype.ID = function() {
  * Call a peer with a specified media (screen or video)
  * @param {String} media    The media used
  * @param {Object} offer    The offer if exists
+ * @param {Object} constraints that contains
  * @param {String} audioCodec 'g711', 'opus' or default order of browser if null
- * @param {String} videoCodec 'vp8' or 'h264' or default order of browser if null 
+ * @param {String} videoCodec 'vp8' or 'h264' or default order of browser if null
+ * @param {Number} audioBandwidth   The max bandwidth for audio
+ * @param {Number} videoBandwidth   The max bandwidth for video 
  */
 
-Peer.prototype.call = function(media, offer, audioCodec, videoCodec) {
+Peer.prototype.call = function(media, offer, constraints) {
  
     var pc = null;
 
@@ -219,7 +222,7 @@ Peer.prototype.call = function(media, offer, audioCodec, videoCodec) {
         pc.createAnswer(media, this._alreadyReceivedCandidates);    
     }
     else {
-        pc.createOffer(audioCodec, videoCodec);
+        pc.createOffer(constraints);
     }
 };
 

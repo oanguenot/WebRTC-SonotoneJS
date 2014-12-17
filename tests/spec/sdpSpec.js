@@ -108,6 +108,46 @@ describe("SDP module", function() {
 		"a=rtpmap:97 TATA/90000\r\n" +
 		"a=fmtp:97 profile-level-id=42e01f";
 
+	var sdpAudioBandwidth = 
+		"v=0\r\n" + 
+		"m=audio 1 RTP/SAVPF 0 8 111 103 104 106 105 13 126\r\n" +
+		"a=rtpmap:111 opus/48000/2\r\n" +
+		"a=fmtp:111 minptime=10\r\n" +
+		"a=rtpmap:103 ISAC/16000\r\n" +
+		"a=mid:audio\r\n" +
+		"a=fmtp:111 minptime=10";
+
+	var sdpVideoBandwidth = 
+		"m=video 55520 RTP/SAVPF 120 126 97\r\n" +
+		"c=IN IP4 135.244.226.80\r\n" +
+		"a=rtpmap:120 VP8/90000\r\n" +
+		"a=rtpmap:126 TOTO/90000\r\n" +
+		"a=fmtp:126 profile-level-id=42e01f;packetization-mode=1\r\n" +
+		"a=rtpmap:97 TATA/90000\r\n" +
+		"a=mid:video\r\n" +
+		"a=fmtp:97 profile-level-id=42e01f";
+
+	var limitedAudioBandwidth = 
+		"v=0\r\n" + 
+		"m=audio 1 RTP/SAVPF 0 8 111 103 104 106 105 13 126\r\n" +
+		"a=rtpmap:111 opus/48000/2\r\n" +
+		"a=fmtp:111 minptime=10\r\n" +
+		"a=rtpmap:103 ISAC/16000\r\n" +
+		"a=mid:audio\r\n" +
+		"b=AS:20\r\n" +
+		"a=fmtp:111 minptime=10";
+
+	var limitedVideoBandwidth = 
+		"m=video 55520 RTP/SAVPF 120 126 97\r\n" +
+		"c=IN IP4 135.244.226.80\r\n" +
+		"a=rtpmap:120 VP8/90000\r\n" +
+		"a=rtpmap:126 TOTO/90000\r\n" +
+		"a=fmtp:126 profile-level-id=42e01f;packetization-mode=1\r\n" +
+		"a=rtpmap:97 TATA/90000\r\n" +
+		"a=mid:video\r\n" +
+		"b=AS:256\r\n" +
+		"a=fmtp:97 profile-level-id=42e01f";
+
     beforeEach(function() {
         sdpMng = require('sonotone/others/sdp');
     });
@@ -189,7 +229,17 @@ describe("SDP module", function() {
 	it('should force any video codec if it exists', function() {
     	var computedSDP = sdpMng.forceVideoCodecTo(definedSDP_3, "TOTO/90000");
     	expect(computedSDP).toEqual(totoSDP);
-    });    
+    }); 
+
+    it('should force the audio bandwidth to 20', function() {
+		var limited = sdpMng.limitAudioBandwidthTo(sdpAudioBandwidth, 20);
+		expect(limited).toEqual(limitedAudioBandwidth);	
+    });
+
+    it('should force the video bandwidth to 256', function() {
+		var limited = sdpMng.limitVideoBandwidthTo(sdpVideoBandwidth, 256);
+		expect(limited).toEqual(limitedVideoBandwidth);	
+    });   
 
 
 });

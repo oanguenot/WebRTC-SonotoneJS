@@ -76,8 +76,6 @@ var forceCodecTo = function forceCodecTo(sdp, codecToForce, media) {
 
 module.exports = {
 
-
-
     forceVideoCodecTo: function(sdp, codecToForce) {
         return (forceCodecTo(sdp, codecToForce, 'video'));
     },
@@ -209,6 +207,16 @@ module.exports = {
         }
 
         return media;
-    }
+    },
+
+    limitAudioBandwidthTo: function(sdp, size) {
+         sdp = sdp.replace(/a=mid:audio\r\n/g, 'a=mid:audio\r\nb=AS:' + size + '\r\n');
+        return sdp;
+    },
+
+    limitVideoBandwidthTo: function(sdp, size) {
+         sdp = sdp.replace(/a=mid:video\r\n/g, 'a=mid:video\r\nb=AS:' + size + '\r\n');
+        return sdp;
+    },    
 
 };
