@@ -342,7 +342,16 @@ PeerConnection.prototype.createOffer = function(mediaConstraints) {
     }
 };
 
-PeerConnection.prototype.createAnswer = function(media, candidates) {
+/**
+ * Create an answer for answering an other peer
+ * @param {Object} mediaConstraints Additionnal constraints that contains: 
+ * @param {String} audioCodec 'g711', 'opus' or default order of browser if null
+ * @param {String} videoCodec 'vp8' or 'h264' or default order of browser if null
+ * @param {Number} audioBandwidth   The max bandwidth for audio
+ * @param {Number} videoBandwidth   The max bandwidth for video
+ */
+
+PeerConnection.prototype.createAnswer = function(media, candidates, mediaConstraints) {
 
     logger.log(LOG_ID, "Try to create an answer for <" + this._id + ">...");
 
@@ -362,6 +371,30 @@ PeerConnection.prototype.createAnswer = function(media, candidates) {
     }
                 
     this._peer.createAnswer(function(answerSDP) {
+
+        // Change tthe SDP to force some parameters
+        if(mediaConstraints) {
+            if(mediaConstraints.audioCodec  && mediaConstraints.audioCodec !== 'opus/48000/2') {
+                answerSDP.sdp = sdpSwapper.forceAudioCodecTo(answerSDP.sdp, mediaConstraints.audioCodec);
+                logger.log(LOG_ID, "SDP forced audio to " + mediaConstraints.audioCodec, answerSDP.sdp);    
+            }
+
+            if(mediaConstraints.videoCodec && mediaConstraints.videoCodec !== 'VP8/90000') {
+                answerSDP.sdp = sdpSwapper.forceVideoCodecTo(answerSDP.sdp, mediaConstraints.videoCodec);
+                logger.log(LOG_ID, "SDP forced video to " + mediaConstraints.videoCodec, answerSDP.sdp);
+            }
+
+            if(mediaConstraints.audioBandwidth) {
+                answerSDP.sdp = sdpSwapper.limitAudioBandwidthTo(answerSDP.sdp, mediaConstraints.audioBandwidth);
+                logger.log(LOG_ID, "SDP limited audio to " + mediaConstraints.audioBandwidth, answerSDP.sdp);
+            }
+
+            if(mediaConstraints.videoBandwidth) {
+                answerSDP.sdp = sdpSwapper.limitVideoBandwidthTo(answerSDP.sdp, mediaConstraints.videoBandwidth);
+                logger.log(LOG_ID, "SDP limited video to " + mediaConstraints.videoBandwidth, answerSDP.sdp);
+            }
+        }
+        
         //answerSDP.sdp = preferOpus(answerSDP.sdp);
         that.setLocalDescription(answerSDP);
                   

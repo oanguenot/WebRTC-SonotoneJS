@@ -23,6 +23,9 @@ Sonotone separates the Transport/SIG from the Media/PeerConnection by providing 
 
 # HISTORY
 
+## Version 1.0.2
+ - FEATURE: Allow to limit the bandwidth in audio and video (up & down)
+
 ## Version 1.0.1
  - FEATURE: Force to any codec (not only G711 and H264)
 

@@ -219,7 +219,7 @@ Peer.prototype.call = function(media, offer, constraints) {
 
     if(offer) {
         pc.setRemoteDescription(adapter.RTCSessionDescription(offer.data));
-        pc.createAnswer(media, this._alreadyReceivedCandidates);    
+        pc.createAnswer(media, this._alreadyReceivedCandidates, constraints);    
     }
     else {
         pc.createOffer(constraints);
