@@ -261,6 +261,9 @@ PeerConnection.prototype.attach = function(stream) {
  * @param {String} videoCodec 'vp8' or 'h264' or default order of browser if null
  * @param {Number} audioBandwidth   The max bandwidth for audio
  * @param {Number} videoBandwidth   The max bandwidth for video
+ * @param {Object} opus Opus specific options that contains
+ *          @param {Boolean} useFEC True to use FEC
+ *          @param {Boolean} useStereo True fo use the stereo
  */
 
 PeerConnection.prototype.createOffer = function(mediaConstraints) {
@@ -292,11 +295,22 @@ PeerConnection.prototype.createOffer = function(mediaConstraints) {
 
         this._peer.createOffer(function(offerSDP) {
 
-            // Change tthe SDP to force some parameters
+            // Change the SDP to force some parameters
             if(mediaConstraints) {
                 if(mediaConstraints.audioCodec  && mediaConstraints.audioCodec !== 'opus/48000/2') {
                     offerSDP.sdp = sdpSwapper.forceAudioCodecTo(offerSDP.sdp, mediaConstraints.audioCodec);
                     logger.log(LOG_ID, "SDP forced audio to " + mediaConstraints.audioCodec, offerSDP.sdp);    
+                }
+                else {
+                    if(mediaConstraints.useFEC) {
+                        offerSDP.sdp = sdpSwapper.addFECSupport(offerSDP.sdp);
+                        logger.log(LOG_ID, "SDP add FEC support to Opus", offerSDP.sdp);
+                    }
+
+                    if(mediaConstraints.useStereo) {
+                        offerSDP.sdp = sdpSwapper.addStereoSupport(offerSDP.sdp);
+                        logger.log(LOG_ID, "SDP add Stereo support to Opus", offerSDP.sdp);
+                    }
                 }
 
                 if(mediaConstraints.videoCodec && mediaConstraints.videoCodec !== 'VP8/90000') {
@@ -313,6 +327,7 @@ PeerConnection.prototype.createOffer = function(mediaConstraints) {
                     offerSDP.sdp = sdpSwapper.limitVideoBandwidthTo(offerSDP.sdp, mediaConstraints.videoBandwidth);
                     logger.log(LOG_ID, "SDP limited video to " + mediaConstraints.videoBandwidth, offerSDP.sdp);
                 }
+
             }
 
             var sdpMedia = sdpSwapper.getMediaInSDP(offerSDP.sdp);
@@ -378,6 +393,17 @@ PeerConnection.prototype.createAnswer = function(media, candidates, mediaConstra
                 answerSDP.sdp = sdpSwapper.forceAudioCodecTo(answerSDP.sdp, mediaConstraints.audioCodec);
                 logger.log(LOG_ID, "SDP forced audio to " + mediaConstraints.audioCodec, answerSDP.sdp);    
             }
+            else {
+                if(mediaConstraints.useFEC) {
+                    offerSDP.sdp = sdpSwapper.addFECSupport(offerSDP.sdp);
+                    logger.log(LOG_ID, "SDP add FEC support to Opus", offerSDP.sdp);
+                }
+
+                if(mediaConstraints.useStereo) {
+                    offerSDP.sdp = sdpSwapper.addStereoSupport(offerSDP.sdp);
+                    logger.log(LOG_ID, "SDP add Stereo support to Opus", offerSDP.sdp);
+                }
+            }
 
             if(mediaConstraints.videoCodec && mediaConstraints.videoCodec !== 'VP8/90000') {
                 answerSDP.sdp = sdpSwapper.forceVideoCodecTo(answerSDP.sdp, mediaConstraints.videoCodec);
@@ -394,7 +420,7 @@ PeerConnection.prototype.createAnswer = function(media, candidates, mediaConstra
                 logger.log(LOG_ID, "SDP limited video to " + mediaConstraints.videoBandwidth, answerSDP.sdp);
             }
         }
-        
+
         //answerSDP.sdp = preferOpus(answerSDP.sdp);
         that.setLocalDescription(answerSDP);
                   

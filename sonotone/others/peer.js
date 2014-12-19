@@ -79,7 +79,10 @@ Peer.prototype.ID = function() {
  * @param {String} audioCodec 'g711', 'opus' or default order of browser if null
  * @param {String} videoCodec 'vp8' or 'h264' or default order of browser if null
  * @param {Number} audioBandwidth   The max bandwidth for audio
- * @param {Number} videoBandwidth   The max bandwidth for video 
+ * @param {Number} videoBandwidth   The max bandwidth for video
+ * @param {Object} opus Opus specific options that contains
+ *          @param {Boolean} useFEC True to use FEC
+ *          @param {Boolean} useStereo True fo use the stereo
  */
 
 Peer.prototype.call = function(media, offer, constraints) {

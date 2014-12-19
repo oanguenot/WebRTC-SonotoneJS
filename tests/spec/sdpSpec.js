@@ -148,6 +148,27 @@ describe("SDP module", function() {
 		"b=AS:256\r\n" +
 		"a=fmtp:97 profile-level-id=42e01f";
 
+	var sdpwithoutfec = 
+     	"v=0\r\n" + 
+		"m=audio 1 RTP/SAVPF 111 103 104 0 8 106 105 13 126\r\n" +
+		"a=rtpmap:111 opus/48000/2\r\n" +
+		"a=fmtp:111 minptime=10\r\n" +
+		"a=rtpmap:103 ISAC/16000\r\n";
+
+	var sdpwithfec = 
+		"v=0\r\n" + 
+		"m=audio 1 RTP/SAVPF 111 103 104 0 8 106 105 13 126\r\n" +
+		"a=rtpmap:111 opus/48000/2\r\n" +
+		"a=fmtp:111 minptime=10; useinbandfec=1\r\n" +
+		"a=rtpmap:103 ISAC/16000\r\n";
+
+	var sdpwithstereo = 
+		"v=0\r\n" + 
+		"m=audio 1 RTP/SAVPF 111 103 104 0 8 106 105 13 126\r\n" +
+		"a=rtpmap:111 opus/48000/2\r\n" +
+		"a=fmtp:111 minptime=10; stereo=1; sprop-stereo=1\r\n" +
+		"a=rtpmap:103 ISAC/16000\r\n";
+
     beforeEach(function() {
         sdpMng = require('sonotone/others/sdp');
     });
@@ -239,7 +260,17 @@ describe("SDP module", function() {
     it('should force the video bandwidth to 256', function() {
 		var limited = sdpMng.limitVideoBandwidthTo(sdpVideoBandwidth, 256);
 		expect(limited).toEqual(limitedVideoBandwidth);	
-    });   
+    });
+
+    it('should add FEC support', function() {
+    	var sdp = sdpMng.addFECSupport(sdpwithoutfec);
+    	expect(sdp).toEqual(sdpwithfec);
+    });
+
+    it('should add Stereo support', function() {
+    	var sdp = sdpMng.addStereoSupport(sdpwithoutfec);
+    	expect(sdp).toEqual(sdpwithstereo);
+    });
 
 
 });
