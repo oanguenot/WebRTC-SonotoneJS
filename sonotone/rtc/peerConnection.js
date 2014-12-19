@@ -302,12 +302,12 @@ PeerConnection.prototype.createOffer = function(mediaConstraints) {
                     logger.log(LOG_ID, "SDP forced audio to " + mediaConstraints.audioCodec, offerSDP.sdp);    
                 }
                 else {
-                    if(mediaConstraints.useFEC) {
+                    if(mediaConstraints.opus && mediaConstraints.opus.useFEC) {
                         offerSDP.sdp = sdpSwapper.addFECSupport(offerSDP.sdp);
                         logger.log(LOG_ID, "SDP add FEC support to Opus", offerSDP.sdp);
                     }
 
-                    if(mediaConstraints.useStereo) {
+                    if(mediaConstraints.opus && mediaConstraints.opus.useStereo) {
                         offerSDP.sdp = sdpSwapper.addStereoSupport(offerSDP.sdp);
                         logger.log(LOG_ID, "SDP add Stereo support to Opus", offerSDP.sdp);
                     }
